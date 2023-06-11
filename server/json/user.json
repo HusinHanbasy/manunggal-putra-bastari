@@ -1,0 +1,18 @@
+[
+    {
+        "id":1,
+        "username": "admin123",
+        "email":"admin@gmail.com",
+        "password": "qwerty123",
+        "phone":"081279751673",
+        "status":"admin"
+    },
+    {
+        "id":2,
+        "username": "husin",
+        "email":"husin@gmail.com",
+        "password": "qwerty123",
+        "phone":"081279751673",
+        "status":"user"
+    }
+]
