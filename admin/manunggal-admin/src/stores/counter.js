@@ -9,11 +9,14 @@ export const useCounterStore = defineStore('counter', {
     totalDonaturs: 0,
     totalCampaigns: 0,
     totalCategories: 0,
+    totalHistories: 0,
     pagination: 0,
+    historiesList: [],
     campaigns: [],
     campaign: {},
     categories: [],
     isLogin: false,
+    status: [],
   }),
   actions: {
     register(data) {
@@ -124,7 +127,7 @@ export const useCounterStore = defineStore('counter', {
         if (result.isConfirmed) {
           localStorage.clear()
           this.isLogin = false
-          this.router.push('/')
+          this.router.push('/login')
           Swal.fire(
             'you have successfully logged out',
           )
@@ -139,9 +142,12 @@ export const useCounterStore = defineStore('counter', {
         method: 'GET',
         url: `${baseUrl}/campaign`,
         params: params,
+        headers: {
+          access_token: localStorage.access_token
+        }
       })
         .then((response) => {
-          // console.log(response.data.campaign);
+          console.log(response.data.campaign);
           this.campaigns = response.data.campaign
           this.totalCampaigns = response.data.campaign.length
           this.totalPage = response.data.totalPage
@@ -154,6 +160,9 @@ export const useCounterStore = defineStore('counter', {
       axios({
         method: 'GET',
         url: `${baseUrl}/campaign/${id}`,
+        headers: {
+          access_token: localStorage.access_token
+        }
       })
         .then(response => {
           this.campaign = response.data.data
@@ -174,7 +183,11 @@ export const useCounterStore = defineStore('counter', {
           duration: data.duration,
           description: data.description,
           CategoryId: data.CategoryId,
-          imageUrl: data.imageUrl
+          imageUrl: data.imageUrl,
+          StatusId: data.StatusId
+        },
+        headers: {
+          access_token: localStorage.access_token
         }
       })
         .then(response => {
@@ -204,6 +217,9 @@ export const useCounterStore = defineStore('counter', {
           axios({
             url: `${baseUrl}/campaign/${id}`,
             method: "DELETE",
+            headers: {
+              access_token: localStorage.access_token
+            }
           })
             .then(response => {
               this.fetchCampaign()
@@ -228,6 +244,9 @@ export const useCounterStore = defineStore('counter', {
         method: 'GET',
         url: `${baseUrl}/category`,
         params: params,
+        headers: {
+          access_token: localStorage.access_token
+        }
       })
         .then((response) => {
           this.categories = response.data
@@ -242,6 +261,9 @@ export const useCounterStore = defineStore('counter', {
         method: 'GET',
         url: `${baseUrl}/users`,
         params: params,
+        headers: {
+          access_token: localStorage.access_token
+        }
       })
         .then((response) => {
           this.donaturs = response.data
@@ -257,6 +279,9 @@ export const useCounterStore = defineStore('counter', {
         method: 'POST',
         data: {
           name: data.name
+        },
+        headers: {
+          access_token: localStorage.access_token
         }
       })
         .then(response => {
@@ -272,7 +297,6 @@ export const useCounterStore = defineStore('counter', {
           console.log(error)
         })
     },
-
     deleteCategory(id) {
       Swal.fire({
         title: 'Are you sure?',
@@ -316,15 +340,56 @@ export const useCounterStore = defineStore('counter', {
         },
       })
         .then((response) => {
-          // console.log(response);
-          this.historiesList = response.data.data;
-          this.totalHistories = response.data.data.length;
+          this.historiesList = response.data.history;
+          this.totalHistories = response.data.history.length;
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    handleLogout() {
+    fetchStatus(params) {
+      axios({
+        method: 'GET',
+        url: `${baseUrl}/status`,
+        params: params,
+        headers: {
+          access_token: localStorage.access_token
+        }
+      })
+        .then((response) => {
+          this.status = response.data
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    },
+    addStatus(data) {
+      axios({
+        url: `${baseUrl}/status`,
+        method: 'POST',
+        data: {
+          name: data.name
+        },
+        headers: {
+          access_token: localStorage.access_token
+        }
+      })
+        .then(response => {
+          this.fetchStatus()
+          this.router.push('/status')
+          Swal.fire({
+            icon: 'success',
+            title: 'success',
+            text: 'success add new category'
+          })
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+
+    deleteStatus(id) {
       Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -332,14 +397,31 @@ export const useCounterStore = defineStore('counter', {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, logout!'
+        confirmButtonText: 'Yes, delete it!'
       }).then((result) => {
         if (result.isConfirmed) {
-          // localStorage.removeItem("access_token")
-          localStorage.clear()
-          this.page = 'login';
+          axios({
+            url: `${baseUrl}/status/${id}`,
+            method: "DELETE",
+            headers: {
+              access_token: localStorage.getItem("access_token")
+            }
+          })
+            .then(response => {
+              this.fetchStatus()
+              this.router.push('/status')
+            })
+            .catch(error => {
+              console.log(error)
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.response.data.message
+              })
+            })
         }
       })
     },
+
   }
 })

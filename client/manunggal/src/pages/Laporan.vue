@@ -8,13 +8,7 @@ export default {
         Footer
     },
     props: ["campaigns"],
-    methods: {
-        ...mapActions(useCounterStore, ["campaignById"]),
-        showDetail(id) {
-            this.campaignById(id)
-            this.$router.push(`/detail/${this.campaign.id}`)
-        }
-    }
+
 }
 </script>
 <template>

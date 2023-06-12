@@ -13,26 +13,32 @@ class DonationController {
     static async addDonation(req, res, next) {
         try {
             // --> find user <--
-            const UserId = req.user.id
-            const user = await User.findByPk(UserId)
+            const id = req.user.id
+            const user = await User.findByPk(id)
             if (!user) {
                 throw { name: "NotFound" }
             }
 
             // --> find campaign <--
-            const { value, CampaignId } = req.body
+            let { value, CampaignId
+            } = req.body
+
             const campaign = await Campaign.findByPk(CampaignId)
             if (!campaign) {
                 throw { name: "NotFound" }
             }
 
             // --> upate money campaign <--
-            const { title, name, target, description, donator, duration, status, image, CategoryId } = campaign
-            const updateCampaign = await Campaign.update({ title, name, money: +campaign.money + value, target, description, donator, duration, status, image, CategoryId })
+            const { title, target, description, duration, StatusId, imageUrl, CategoryId, UserId } = campaign
+            const updateCampaign = await Campaign.update({ title, money: +campaign.money + +value, target, description, duration, StatusId, imageUrl, CategoryId, UserId }, {
+                where: {
+                    id: CampaignId
+                }
+            })
 
             // --> create donation history<--
             const donation = await Donation.create({ CampaignId, UserId, value })
-            const history = await History.create({ UserId, CampaignId, description: ` campaign with name ${campaign.name} has been donate by Ummat with name ${user.username}` })
+            const history = await History.create({ UserId, CampaignId, description: ` campaign with name ${campaign.title} has been donate by Ummat with name ${user.username}` })
             res.status(201).json({ donation, history })
 
         } catch (error) {

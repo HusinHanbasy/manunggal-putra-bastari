@@ -17,21 +17,21 @@ export default {
     },
 
     methods: {
-        ...mapActions(useCounterStore, ['logout', 'getCampaigns']),
+        ...mapActions(useCounterStore, ['logout', 'fetchCampaigns']),
         buttonLogin() {
             this.$router.push('/login')
         },
         buttonLogout() {
             this.logout()
         },
-        filterGenre() {
+        filterCategory() {
             const data = {
                 search: this.search,
                 page: this.page,
                 genre: this.genre,
                 limit: this.limit
             }
-            this.getCampaigns(data)
+            this.fetchCampaigns(data)
         },
         buttonSearch() {
             const data = {
@@ -40,7 +40,7 @@ export default {
                 genre: this.genre,
                 limit: this.limit
             }
-            this.getMovies(data)
+            this.fetchCampaigns(data)
         },
         buttonAll() {
             const data = {
@@ -49,7 +49,7 @@ export default {
                 genre: '',
                 limit: this.limit
             }
-            this.getCampaigns(data)
+            this.fetchCampaigns(data)
         }
     }
 }

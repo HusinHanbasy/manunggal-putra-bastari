@@ -14,11 +14,12 @@ export default {
       duration: '',
       description: '',
       CategoryId: '',
-      imageUrl: ''
+      imageUrl: '',
+      StatusId: ''
     }
   },
   computed: {
-    ...mapState(useCounterStore, ["categories"])
+    ...mapState(useCounterStore, ["categories", "status"])
   },
   methods: {
     ...mapActions(useCounterStore, ["addCampaign"]),
@@ -29,8 +30,8 @@ export default {
         duration: this.duration,
         description: this.description,
         CategoryId: this.CategoryId,
-        imageUrl: this.imageUrl
-
+        imageUrl: this.imageUrl,
+        StatusId: this.StatusId
       })
     }
   }
@@ -75,6 +76,14 @@ export default {
           <select id="product-category" class="form-select" v-model="CategoryId" required>
             <option value="" selected disabled>-- Select Category --</option>
             <option v-for="category in categories" :key="category.id" :value="category.id"> {{ category.name }}
+            </option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="product-status">Status <span class="text-danger fw-bold">*</span></label>
+          <select id="product-status" class="form-select" v-model="StatusId" required>
+            <option value="" selected disabled>-- Select Status --</option>
+            <option v-for="stat in status" :key="stat.id" :value="stat.id"> {{ stat.name }}
             </option>
           </select>
         </div>

@@ -1,6 +1,6 @@
 const { comparePassword } = require('../helpers/bcrypt')
-const { generateToken } = require('../helpers/jwt')
-const { User, Campaign, Category, Donation } = require('../models')
+const { encodedToken } = require('../helpers/jwt')
+const { User, Campaign, Category, Donation, Status } = require('../models')
 const { Op } = require('sequelize')
 
 class CustomerController {
@@ -75,18 +75,28 @@ class CustomerController {
     }
     static async allCampaign(req, res, next) {
         try {
-            let { page, limit, search } = req.query
+            let { page, limit, search, status, category } = req.query
             limit = limit || 6
             let options = {
                 include: [
-                    { model: Category }
+                    { model: Category },
+                    { model: Status },
+                    { model: Donation }
                 ],
                 limit
             }
             options.where = {
                 name: {
                     [Op.iLike]: `%${search || ''}%`
+                },
+                StatusId: {
+                    [Op.iLike]: `%${status || ''}%`
+                },
+                CategoryId: {
+                    [Op.iLike]: `%${category || ''}%`
+
                 }
+
             }
             if (page) {
                 options.offset = (page - 1) * limit
@@ -102,7 +112,7 @@ class CustomerController {
     static async campaignById(req, res, next) {
         try {
             const id = req.params.id
-            const campaign = await Campaign.findByPk(id, { include: ["Category", "Donation"] })
+            const campaign = await Campaign.findByPk(id, { include: ["Category", "Donation", "Status"] })
             if (!campaign) {
                 return res.status(404).json({ message: `Data Not Found` });
             }
@@ -111,7 +121,73 @@ class CustomerController {
             next(error)
         }
     }
+    static async allDonation(req, res, next) {
+        try {
+            const id = req.user.id
+            const donation = await Donation.findAll({ where: { id } })
+            res.status(200).json({ donation })
+        } catch (error) {
+            next(error)
+        }
+    }
+    static async addDonation(req, res, next) {
+        try {
+            // --> find user <--
+            const id = req.user.id
+            const user = await User.findByPk(id)
+            if (!user) {
+                throw { name: "NotFound" }
+            }
 
+            // --> find campaign <--
+            const { value, CampaignId } = req.body
+            const campaign = await Campaign.findByPk(CampaignId)
+            if (!campaign) {
+                throw { name: "NotFound" }
+            }
+
+            // --> upate money campaign <--
+            const { title, target, description, duration, StatusId, imageUrl, CategoryId, UserId } = campaign
+            const updateCampaign = await Campaign.update({ title, money: +campaign.money + value, target, description, duration, StatusId, imageUrl, CategoryId, UserId }, {
+                where: {
+                    id: CampaignId
+                }
+            })
+
+            // --> create donation history<--
+            const donation = await Donation.create({ CampaignId, UserId, value })
+            const history = await History.create({ UserId, CampaignId, description: ` campaign with name ${campaign.name} has been donate by Ummat with name ${user.username}` })
+            res.status(201).json({ donation, history })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+    static async allCategory(req, res, next) {
+        try {
+            const categories = await Category.findAll()
+            res.status(200).json(categories)
+        } catch (error) {
+            console.log(error, "ppppp");
+            next(error)
+        }
+    }
+    static async allStatus(req, res, next) {
+        try {
+            const status = await Status.findAll()
+            res.status(200).json(status)
+        } catch (error) {
+            next(error)
+        }
+    }
+    static async allImage(req, res, next) {
+        try {
+            const image = await Image.findAll()
+            res.status(200).json({ image })
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 module.exports = CustomerController

@@ -5,13 +5,19 @@ const baseUrl = "http://localhost:3100"
 
 export const useCounterStore = defineStore('counter', {
   state: () => ({
-    myCamapign: 0,
+    myCampaign: 0,
     myDonation: 0,
     getDana: 0,
     totalPage: 0,
+    totalMoney: 0,
+    totalDonaturs: 0,
     totalDonation: 0,
+    totalPeople: 0,
+    totalPlace: 0,
     totalCampaign: 0,
     pagination: 0,
+    statuses: [],
+    donations: [],
     campaigns: [],
     campaign: [],
     categories: [],
@@ -20,7 +26,7 @@ export const useCounterStore = defineStore('counter', {
   actions: {
     register(data) {
       axios({
-        url: `${baseUrl}/register`,
+        url: `${baseUrl}/pub/register`,
         method: "POST",
         data: {
           username: data.username,
@@ -51,7 +57,7 @@ export const useCounterStore = defineStore('counter', {
     },
     loginCust(input) {
       axios({
-        url: `${baseUrl}/login`,
+        url: `${baseUrl}/pub/login`,
         method: "POST",
         data: {
           email: input.email,
@@ -135,7 +141,7 @@ export const useCounterStore = defineStore('counter', {
     fetchCampaigns(params) {
       axios({
         method: 'GET',
-        url: `${baseUrl}/campaign`,
+        url: `${baseUrl}/pub/campaign`,
         params: params,
       })
         .then((response) => {
@@ -150,7 +156,7 @@ export const useCounterStore = defineStore('counter', {
     campaignById(id) {
       axios({
         method: 'GET',
-        url: `${baseUrl}/movie/${id}`,
+        url: `${baseUrl}/pub/movie/${id}`,
       })
         .then(response => {
           this.campagin = response.data.data
@@ -162,7 +168,7 @@ export const useCounterStore = defineStore('counter', {
     fetchCategory(params) {
       axios({
         method: 'GET',
-        url: `${baseUrl}/category`,
+        url: `${baseUrl}/pub/category`,
         params: params,
       })
         .then((response) => {
@@ -171,6 +177,67 @@ export const useCounterStore = defineStore('counter', {
         .catch((error) => {
           console.log(error);
         })
-    }
+    },
+    fetchDonaturs(params) {
+      axios({
+        method: 'GET',
+        url: `${baseUrl}/users`,
+        params: params,
+      })
+        .then((response) => {
+          this.totalDonaturs = response.data.length
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    },
+    fetchStatus(params) {
+      axios({
+        method: 'GET',
+        url: `${baseUrl}/pub/status`,
+        params: params,
+      })
+        .then((response) => {
+          this.statuses = response.data.data
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    },
+    fetchDonation(params) {
+      axios({
+        method: 'GET',
+        url: `${baseUrl}/pub/status`,
+        params: params,
+      })
+        .then((response) => {
+          this.donations = response.data.data
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    },
+    addDonation(data) {
+      axios({
+        url: `${baseUrl}/pub/donation`,
+        method: 'POST',
+        data: {
+          CampaignId: data.id,
+          value: data.value
+        }
+      })
+        .then(response => {
+          this.fetchCampaign()
+          this.router.push('/campaign')
+          Swal.fire({
+            icon: 'success',
+            title: 'success',
+            text: 'success donation'
+          })
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
   }
 })

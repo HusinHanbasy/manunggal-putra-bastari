@@ -6,12 +6,17 @@ const category = require('./category')
 const donation = require('./donation')
 const image = require('./image')
 const customer = require('./customer')
+const status = require('./status')
+const authentification = require('../middleware/authentification')
 
+router.use(customer)
 router.use(user)
-router.use(campaign)
+router.use(authentification)
 router.use(category)
+router.use(campaign)
+router.use(status)
 router.use(donation)
 router.use(image)
-router.use(customer)
+
 
 module.exports = router

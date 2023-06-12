@@ -1,19 +1,19 @@
 <script>
+import { useCounterStore } from '../stores/counter'
+import { mapState, mapActions } from 'pinia';
 export default {
-  emits: ["movePage", "dataLogin", "handleCredentialResponse"],
   data() {
     return {
       email: "",
       password: "",
     };
   },
+
   methods: {
+    ...mapActions(useCounterStore, ["loginCust"]),
     login() {
-      this.$emit("dataLogin", { email: this.email, password: this.password });
+      this.loginCust({ email: this.email, password: this.password })
     },
-    googleLogin(response) {
-      this.$emit("handleCredentialResponse", response)
-    }
   },
 };
 </script>

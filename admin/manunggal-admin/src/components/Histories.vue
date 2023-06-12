@@ -1,14 +1,25 @@
 <script>
 import TableRow from './TableRow.vue';;
+import { mapState, mapActions } from 'pinia';
+import { useCounterStore } from '../stores/counter'
 export default {
   components: {
     TableRow
   },
-  props: ["historiesList"],
   data() {
     return {
-      Thhistory: ['no', 'Campaign', 'User', 'description']
+      thHistory: ['no', 'campaign', 'userId', 'description']
     }
+  },
+  computed: {
+    ...mapState(useCounterStore, ["historiesList"])
+  },
+  methods: {
+    ...mapActions(useCounterStore, ["fetchHistories"]),
+
+  },
+  created() {
+    this.fetchHistories()
   }
 }
 </script>
@@ -57,8 +68,9 @@ export default {
                 <table class="table align-items-center mb-0">
                   <thead class="bg-gray-100">
                     <tr>
-                      <th v-for="th in Thhistory" class="
+                      <th v-for="th in thHistory" class="
                           text-secondary text-xs
+                          text-center
                           font-weight-semibold
                           opacity-7
                         ">
@@ -68,7 +80,7 @@ export default {
                   </thead>
                   <tbody id="table-history">
                     <TableRow v-for="(history, index) in historiesList" :key="history.id" :data="history" :index="index"
-                      :cols="Thhistory" />
+                      :cols="thHistory" />
                   </tbody>
                 </table>
               </div>

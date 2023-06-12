@@ -9,7 +9,7 @@ export default {
   },
   data() {
     return {
-      Thfood: ["no", "title", "money", "target", "duration", "imageUrl", "description", "categoryId", "action"],
+      Thfood: ["no", "title", "money", "target", "duration", "imageUrl", "description", "category", "status", "action"],
     }
   },
   computed: {
@@ -17,11 +17,12 @@ export default {
   },
 
   methods: {
-    ...mapActions(useCounterStore, ["fetchCampaign", "fetchCategory", "deleteCampaign", "editCampaign", "campaignById"]),
+    ...mapActions(useCounterStore, ["fetchCampaign", "fetchCategory", "deleteCampaign", "editCampaign", "campaignById", "fetchStatus"]),
   },
   created() {
     this.fetchCampaign()
     this.fetchCategory()
+    this.fetchStatus()
   }
 };
 </script>

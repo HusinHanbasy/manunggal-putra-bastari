@@ -1,11 +1,5 @@
 <script>
-import {
-    MDBFooter,
-    MDBContainer,
-    MDBRow,
-    MDBCol,
-} from 'mdb-vue-ui-kit';
-import { ref } from "vue";
+
 import Footer from '../components/Footer.vue';
 import { mapState, mapActions } from 'pinia';
 import { useCounterStore } from '../stores/counter'
@@ -15,7 +9,7 @@ export default {
         return {
             search: '',
             page: '1',
-            genre: '',
+            category: '',
             limit: 20,
         }
     },
@@ -24,16 +18,16 @@ export default {
         Footer
     },
     computed: {
-        ...mapState(useCounterStore, ["campaigns", 'totalDonaturs', 'totalCampaigns', 'totalMoney'])
+        ...mapState(useCounterStore, ["campaigns", 'totalDonaturs', 'totalPeople', 'totalPlace', 'totalMoney'])
     },
     methods: {
-        ...mapActions(useCounterStore, ["fetchCampaigns", "camapaignById"]),
+        ...mapActions(useCounterStore, ["fetchCampaigns", "camapaignById", "fetchDonaturs"]),
         onClickHandler() {
             const data = {
                 limit: this.limit,
                 page: this.page,
                 search: this.search,
-                genre: this.genre
+                category: this.category
             }
             this.getCampaigns(data)
         },
@@ -43,10 +37,10 @@ export default {
         }
 
     },
-    // created() {
-
-    // }
-
+    created() {
+        this.fetchCampaigns()
+        this.fetchDonaturs()
+    }
 }
 </script>
 
@@ -282,7 +276,7 @@ export default {
                     group
                 </span>
                 <h1 class="fs-6 fw-bold text-start bold">
-                    100 <br />
+                    {{ totalDonaturs }} <br />
                     Ummat telah berdonasi
                 </h1>
             </div>
@@ -291,7 +285,7 @@ export default {
                     payments
                 </span>
                 <h1 class="fs-6 fw-bold text-start bold">
-                    Rp 15.000.000 <br />
+                    Rp {{ totalMoney }} <br />
                     Total Dana Terkumpul
                 </h1>
             </div>
@@ -300,7 +294,7 @@ export default {
                     person_pin
                 </span>
                 <h1 class="fs-6 fw-bold text-start bold">
-                    28 <br />
+                    {{ totalPeople }} <br />
                     Orang telah terbantu
                 </h1>
             </div>
@@ -309,7 +303,7 @@ export default {
                     pin_drop
                 </span>
                 <h1 class="fs-6 fw-bold text-start bold">
-                    14 <br />
+                    {{ totalPlace }} <br />
                     titik lokasi telah tersalurkan
                 </h1>
             </div>

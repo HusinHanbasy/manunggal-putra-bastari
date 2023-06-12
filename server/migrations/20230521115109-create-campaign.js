@@ -33,6 +33,18 @@ module.exports = {
           model: "Categories"
         }
       },
+      UserId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Users"
+        }
+      },
+      StatusId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Statuses"
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

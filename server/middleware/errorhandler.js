@@ -19,7 +19,7 @@ module.exports = ((error, req, res, next) => {
             break
         case "Unauthentificated":
             status = 401
-            message = "Invalid Token"
+            message = "Please Login First"
         default:
             status = 500
             message = "Internal server error"

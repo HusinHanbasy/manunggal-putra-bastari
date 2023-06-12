@@ -16,6 +16,8 @@ export default {
             search: '',
             page: '1',
             limit: 10,
+            CategoryId: '',
+            StatusId: ''
         }
     },
     components: {
@@ -23,17 +25,18 @@ export default {
         Footer
     },
     computed: {
-        ...mapState(useCounterStore, ["campaigns", 'totalMovies', 'totalPage'])
+        ...mapState(useCounterStore, ["campaigns", 'totalCampaign', 'totalPage'])
     },
     methods: {
-        ...mapActions(useCounterStore, ["getCampagins"]),
+        ...mapActions(useCounterStore, ["fetchCampaigns"]),
         onClickHandler() {
             const data = {
                 limit: this.limit,
                 page: this.page,
                 search: this.search,
+                CategoryId: this.CategoryId
             }
-            this.getCampaigns(data)
+            this.fetchCampaigns(data)
         },
 
     },

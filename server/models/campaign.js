@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.belongsTo(models.Category, { foreignKey: "CategoryId" })
+      this.belongsTo(models.Status, { foreignKey: "StatusId" })
+      this.belongsTo(models.User, { foreignKey: "UserId" })
       this.hasMany(models.Donation, { foreignKey: "CampaignId" })
       this.hasMany(models.History, { foreignKey: "CampaignId" })
     }
@@ -98,6 +100,30 @@ module.exports = (sequelize, DataTypes) => {
         },
         notNull: {
           message: "Category Id is required"
+        }
+      }
+    },
+    UserId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          message: "User Id is required"
+        },
+        notNull: {
+          message: "User Id is required"
+        }
+      }
+    },
+    StatusId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          message: "Status Id is required"
+        },
+        notNull: {
+          message: "Status Id is required"
         }
       }
     },
